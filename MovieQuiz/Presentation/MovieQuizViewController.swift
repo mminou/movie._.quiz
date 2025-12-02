@@ -48,7 +48,7 @@ final class MovieQuizViewController: UIViewController {
     }
     
     private func show(quiz step: QuizStepViewModel) {
-        
+        imageView.layer.cornerRadius = 20
         imageView.layer.borderWidth = 0
         counterLabel.text = step.questionNumber
         imageView.image = step.image
@@ -67,7 +67,7 @@ final class MovieQuizViewController: UIViewController {
             imageView.layer.borderColor = UIColor.ypRed.cgColor
         }
         
-        imageView.layer.cornerRadius = 20
+        //imageView.layer.cornerRadius = 20
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.showNextQuestionOrResults()
