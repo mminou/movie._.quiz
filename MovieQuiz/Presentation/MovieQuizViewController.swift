@@ -34,6 +34,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private let questionsAmount = 10
     private var questionFactory: QuestionFactoryProtocol?
     private var currentQuestion: QuizQuestion?
+    private var alertPresenter: AlertPresenter?
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         let image = UIImage(named: model.image) ?? UIImage()
@@ -84,21 +85,16 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
     
     private func show(quiz result: QuizResultViewModel) {
-        let alert = UIAlertController(title: result.title,
-                                      message: result.text,
-                                      preferredStyle: .alert)
+        let alert = AlertModel(title: result.title,
+                               message: result.text,
+                               buttonText: result.buttonText, completion: { [weak self] in
+                               guard let self = self else { return }
+                               self.currentQuestIndex = 0
+                               self.correctAnswer = 0
+                               questionFactory?.requestNextQuestion() } )
         
-        let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
-            guard let self = self else { return }
-            self.currentQuestIndex = 0 //?
-            self.correctAnswer = 0
-            questionFactory?.requestNextQuestion()
-        }
-        
-        alert.addAction(action)
-        self.present(alert, animated: true, completion: nil)
+        alertPresenter?.show(result: alert)
     }
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -106,6 +102,10 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         let questionFactory = QuestionFactory()
         questionFactory.delegate = self
         self.questionFactory = questionFactory
+        
+        let alertPresenter = AlertPresenter()
+        alertPresenter.controller = self
+        self.alertPresenter = alertPresenter
         
         self.questionFactory?.requestNextQuestion()
         
