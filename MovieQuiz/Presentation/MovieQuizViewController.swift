@@ -35,6 +35,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var questionFactory: QuestionFactoryProtocol?
     private var currentQuestion: QuizQuestion?
     private var alertPresenter: AlertPresenter?
+    private var statisticService = StatisticService()
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         let image = UIImage(named: model.image) ?? UIImage()
@@ -73,8 +74,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
     
     private func showNextQuestionOrResults() {
+        
+        
+        
         if currentQuestIndex == questionsAmount - 1 {
-            let quizResult = QuizResultViewModel(title: "Этот раунд окончен!", text: "Ваш результат: \(correctAnswer)/\(questionsAmount)", buttonText: "Сыграть еще раз")
+            statisticService.store(correct: correctAnswer, total: questionsAmount)
+            let quizResult = QuizResultViewModel(title: "Этот раунд окончен!",
+                                                 text: "Ваш результат: \(correctAnswer)/\(questionsAmount)\nКоличество сыгранных квизов: \(statisticService.gamesCount)\nРекорд: \(statisticService.bestGame.correct)/\(statisticService.bestGame.total) (\(statisticService.bestGame.date.dateTimeString))\nСредняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%",
+                                                 buttonText: "Сыграть еще раз")
             show(quiz: quizResult)
         } else {
             currentQuestIndex += 1
