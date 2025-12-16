@@ -35,7 +35,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var questionFactory: QuestionFactoryProtocol?
     private var currentQuestion: QuizQuestion?
     private var alertPresenter: AlertPresenter?
-    private var statisticService = StatisticService()
+    private var statisticService: StatisticServiceProtocol = StatisticService()
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         let image = UIImage(named: model.image) ?? UIImage()
@@ -74,9 +74,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
     
     private func showNextQuestionOrResults() {
-        
-        
-        
         if currentQuestIndex == questionsAmount - 1 {
             statisticService.store(correct: correctAnswer, total: questionsAmount)
             let quizResult = QuizResultViewModel(title: "Этот раунд окончен!",
@@ -115,6 +112,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         self.alertPresenter = alertPresenter
         
         self.questionFactory?.requestNextQuestion()
+        
+        
         
     }
     
