@@ -20,20 +20,27 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-        let questionFactory = QuestionFactory(moviesLoader: MoviesLoader())
-        questionFactory.delegate = self
-        self.questionFactory = questionFactory
-        
-        let alertPresenter = AlertPresenter()
-        alertPresenter.controller = self
-        self.alertPresenter = alertPresenter
+        setupQuestionFactory()
+        setupAlertPresenter()
         
         showLoadingIndicator()
-        questionFactory.loadData()
+        questionFactory?.loadData()
         
     }
     
+    // MARK: - Setup
+    
+    private func setupQuestionFactory() {
+        let questionFactory = QuestionFactory(moviesLoader: MoviesLoader())
+        questionFactory.delegate = self
+        self.questionFactory = questionFactory
+    }
+    
+    private func setupAlertPresenter() {
+        let alertPresenter = AlertPresenter()
+        alertPresenter.controller = self
+        self.alertPresenter = alertPresenter
+    }
 
     // MARK: - QuestionFactoryDelegate
     
@@ -130,7 +137,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
     
     func didLoadDataFromServer() {
-        //activityIndicator.isHidden = true
         hideLoadingIndicator()
         questionFactory?.requestNextQuestion()
     }
