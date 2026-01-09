@@ -118,6 +118,9 @@
                                     <constraint firstAttribute="trailing" secondItem="gYy-qV-Gga" secondAttribute="trailing" id="x3B-KL-oDY"/>
                                 </constraints>
                             </stackView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="cRO-Jl-8se">
+                                <rect key="frame" x="197" y="438" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" name="YP Black"/>
@@ -126,9 +129,12 @@
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="dQv-cL-OeB" secondAttribute="bottom" id="8GS-II-YkY"/>
                             <constraint firstItem="dQv-cL-OeB" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="CN5-Ci-z4s"/>
                             <constraint firstItem="dQv-cL-OeB" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="IjX-li-gGM"/>
+                            <constraint firstItem="cRO-Jl-8se" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="TVJ-8N-oO6"/>
+                            <constraint firstItem="cRO-Jl-8se" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="kKv-NZ-EDE"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="cRO-Jl-8se" id="BVd-C3-Ofg"/>
                         <outlet property="counterLabel" destination="F7s-8R-RTO" id="U72-p5-AZd"/>
                         <outlet property="imageView" destination="gYy-qV-Gga" id="k5h-b5-udp"/>
                         <outlet property="noButton" destination="cxt-E6-Y1r" id="nCh-7N-s0r"/>
