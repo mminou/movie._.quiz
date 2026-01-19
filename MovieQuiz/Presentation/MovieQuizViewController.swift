@@ -1,6 +1,6 @@
 import UIKit
 
-final class MovieQuizViewController: UIViewController {
+final class MovieQuizViewController: UIViewController, MovieQuizViewControllerProtocol {
     @IBOutlet private weak var yesButton: UIButton!
     @IBOutlet private weak var noButton: UIButton!
     @IBOutlet private weak var counterLabel: UILabel!
@@ -10,6 +10,8 @@ final class MovieQuizViewController: UIViewController {
     
     private var alertPresenter: AlertPresenter?
     private var movieQuizPresenter: MovieQuizPresenter!
+    
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,6 +23,17 @@ final class MovieQuizViewController: UIViewController {
         
     }
     
+    // MARK: - Actions
+    
+    @IBAction private func yesButton(_ sender: UIButton) {
+        movieQuizPresenter.yesButton()
+    }
+    
+    @IBAction private func noButton(_ sender: UIButton) {
+        sender.isEnabled = false
+        movieQuizPresenter.noButton()
+    }
+    
     // MARK: - Setup
     
     private func setupAlertPresenter() {
@@ -28,6 +41,8 @@ final class MovieQuizViewController: UIViewController {
         alertPresenter.controller = self
         self.alertPresenter = alertPresenter
     }
+    
+    // MARK: - Private functions
     
     func show(quiz step: QuizStepViewModel) {
         imageView.layer.cornerRadius = 20
@@ -37,21 +52,18 @@ final class MovieQuizViewController: UIViewController {
         textLabel.text = step.question
     }
     
-    func showAnswerResult(isCorrect: Bool) {
-        yesButton.isEnabled = false
-        noButton.isEnabled = false
+    func highlightImageBorder(isCorrect: Bool) {
+        setButtonsEnabled(false)
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
         
-        movieQuizPresenter.didAnswer(isCorrect: isCorrect)
         imageView.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-            guard let self = self else { return }
-            self.movieQuizPresenter.showNextQuestionOrResults()
-            self.yesButton.isEnabled = true
-            self.noButton.isEnabled = true
-        }
+    }
+    
+    func setButtonsEnabled(_ enabled: Bool) {
+        yesButton.isEnabled = enabled
+        noButton.isEnabled = enabled
     }
     
     func show(quiz result: QuizResultViewModel) {
@@ -81,13 +93,18 @@ final class MovieQuizViewController: UIViewController {
         show(quiz: networkError)
         showLoadingIndicator()
     }
+}
+
+protocol MovieQuizViewControllerProtocol: AnyObject {
+    func show(quiz step: QuizStepViewModel)
+    func show(quiz result: QuizResultViewModel)
     
-    @IBAction private func yesButton(_ sender: UIButton) {
-        movieQuizPresenter.yesButton()
-    }
+    func highlightImageBorder(isCorrect: Bool)
     
-    @IBAction private func noButton(_ sender: UIButton) {
-        sender.isEnabled = false
-        movieQuizPresenter.noButton()
-    }
+    func showLoadingIndicator()
+    func hideLoadingIndicator()
+    
+    func showNetworkError(_ message: String)
+    
+    func setButtonsEnabled(_ enabled: Bool)
 }
