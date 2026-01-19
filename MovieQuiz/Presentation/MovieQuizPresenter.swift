@@ -6,12 +6,14 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     let questionsAmount = 10
     var currentQuestion: QuizQuestion?
     private weak var viewController: MovieQuizViewController?
-    private var statisticService: StatisticServiceProtocol = StatisticService()
+    private var statisticService: StatisticServiceProtocol!
     var correctAnswer: Int = 0
     private var questionFactory: QuestionFactoryProtocol?
     
     init(viewController: MovieQuizViewController) {
         self.viewController = viewController
+        
+        statisticService = StatisticService()
         
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         questionFactory?.loadData()
@@ -52,11 +54,23 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         viewController?.showAnswerResult(isCorrect: currentQuestion.correctAnswer == isYes)
     }
     
+    func makeResultsMessage() -> String {
+        statisticService.store(correct: correctAnswer, total: questionsAmount)
+        
+        let bestGame = statisticService.bestGame
+        let currentGameResultLine = "Ваш результат: \(correctAnswer)/\(questionsAmount)"
+        let totalPlaysCountLine = "Количество сыгранных квизов: \(statisticService.gamesCount)"
+        let bestGameInfoLine = "рекорд: \(bestGame.correct)/\(statisticService.bestGame.total) (\(bestGame.date.dateTimeString))"
+        let averageAccuracyLine = "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
+        let resultText = [currentGameResultLine, totalPlaysCountLine, bestGameInfoLine, averageAccuracyLine].joined(separator: "\n")
+        return resultText
+    }
+    
     func showNextQuestionOrResults() {
         if self.isLastQuestion() {
-            statisticService.store(correct: correctAnswer, total: questionsAmount)
+            
             let quizResult = QuizResultViewModel(title: "Этот раунд окончен!",
-                                                 text: "Ваш результат: \(correctAnswer)/\(questionsAmount)\nКоличество сыгранных квизов: \(statisticService.gamesCount)\nРекорд: \(statisticService.bestGame.correct)/\(statisticService.bestGame.total) (\(statisticService.bestGame.date.dateTimeString))\nСредняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%",
+                                                 text: makeResultsMessage(),
                                                  buttonText: "Сыграть еще раз")
             viewController?.show(quiz: quizResult)
         } else {
