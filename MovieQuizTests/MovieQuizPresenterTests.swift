@@ -1,36 +1,8 @@
 import XCTest
 @testable import MovieQuiz
 
-final class MovieQuizViewControllerMock: MovieQuizViewControllerProtocol {
-    func show(quiz step: QuizStepViewModel) {
-    
-    }
-    
-    func show(quiz result: QuizResultViewModel) {
-    
-    }
-    
-    func highlightImageBorder(isCorrect: Bool) {
-    
-    }
-    
-    func showLoadingIndicator() {
-    
-    }
-    
-    func hideLoadingIndicator() {
-    
-    }
-    
-    func showNetworkError(_ message: String) {
-    
-    }
-    func setButtonsEnabled(_ enabled: Bool) {
-
-    }
-}
-
 final class MovieQuizPresenterTests: XCTestCase {
+    
     func testPresenterConvertModel() throws {
         let viewControllerMock = MovieQuizViewControllerMock()
         let sut = MovieQuizPresenter(viewController: viewControllerMock)
